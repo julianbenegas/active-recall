@@ -1,6 +1,8 @@
 import clsx from 'clsx'
+import { useUser } from 'context/user'
 import { useCallback, useState } from 'react'
 import ScrollerBox from './scroller'
+import UserMenu from './user-menu'
 
 type Repetition =
   | 'in-text'
@@ -34,44 +36,65 @@ const Widget = ({
   currentRepetition = 'in-text'
 }: Props) => {
   const [show, setShow] = useState(false)
+  const { user, isLoading, onLogin } = useUser()
 
   const handleShow = useCallback(() => {
     setShow(true)
   }, [])
 
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault()
+      const formData = new FormData(e.currentTarget)
+      const email = formData.get('email') as string
+      onLogin(email)
+    },
+    [onLogin]
+  )
+
   return (
     <div className="max-w-sm py-12 mx-auto space-y-8">
-      <div className="overflow-hidden shadow-2xl rounded-xl">
-        <div className="flex items-center justify-between px-4 py-4">
-          <button className="p-1 text-gray-400 transition-colors rounded-full cursor-default hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-5"
-            >
-              <path
-                fillRule="evenodd"
-                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+      <div className="relative overflow-hidden shadow-2xl rounded-xl">
+        <div className="flex items-center justify-between px-4 py-4 h-14">
           <span className="text-xs font-semibold text-gray-400">1/3</span>
-          <button className="p-1 text-gray-400 transition-colors rounded-full cursor-default hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-5"
+          {user ? (
+            <UserMenu />
+          ) : (
+            <form
+              className="relative flex items-center w-3/5 space-x-2 transition-opacity"
+              onSubmit={handleSubmit}
+              style={{ opacity: isLoading ? 0 : 1 }}
             >
-              <path
-                fillRule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clipRule="evenodd"
+              <input
+                type="email"
+                autoComplete="email"
+                name="email"
+                id="email"
+                maxLength={64}
+                placeholder="you@example.com"
+                className="w-full h-8 px-3 text-xs text-gray-900 transition-colors border border-gray-300 rounded-full pr-7 hover:border-gray-400 focus:border-gray-600 focus:outline-none"
+                required
               />
-            </svg>
-          </button>
+              <button
+                type="submit"
+                aria-label="submit email"
+                className="absolute p-1 text-gray-400 transition-colors rounded-full cursor-default right-px hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </form>
+          )}
         </div>
         <ScrollerBox className="h-64 px-4 pt-2 pb-6">
           <p className="text-lg text-gray-900">{question}</p>
