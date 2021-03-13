@@ -1,6 +1,9 @@
 import { Transition } from '@headlessui/react'
+import clsx from 'clsx'
 import { useUser } from 'context/user'
 import { useCallback, useEffect, useState } from 'react'
+
+import s from './widget.module.css'
 
 const UserMenu = () => {
   const [show, setShow] = useState(false)
@@ -98,14 +101,20 @@ const UserMenu = () => {
           <div className="px-2 pt-2 pb-3">
             <button
               onClick={handleLogout}
-              className="block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md cursor-default hover:text-gray-900 hover:bg-gray-50"
+              className={clsx(
+                'block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md cursor-default hover:text-gray-900 hover:bg-gray-50',
+                s.text
+              )}
             >
               Log Out
             </button>
           </div>
           <a
             href="#"
-            className="block w-full px-5 py-3 font-medium text-center text-indigo-600 bg-gray-50 hover:bg-gray-100"
+            className={clsx(
+              'block w-full px-5 py-3 font-medium text-center text-indigo-600 bg-gray-50 hover:bg-gray-100',
+              s.text
+            )}
           >
             Dashboard
           </a>

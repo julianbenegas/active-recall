@@ -31,12 +31,12 @@ const ScrollerBox = ({ children, style, className, ...props }: Props) => {
     <div {...props} style={{ ...style, position: 'relative' }}>
       <div className={clsx('overflow-auto', className)} onScroll={handleScroll}>
         <span
-          className="absolute top-0 left-0 right-0 h-16 transition-opacity duration-200 pointer-events-none select-none bg-gradient-to-b from-white to-transparent"
+          className="absolute top-0 left-0 right-0 h-16 transition-opacity duration-200 pointer-events-none select-none bg-gradient-to-b from-white-700 to-transparent"
           style={{ opacity: showTopScroller ? 1 : 0 }}
         />
         {children}
         <span
-          className="absolute bottom-0 left-0 right-0 h-16 transition-opacity duration-200 pointer-events-none select-none bg-gradient-to-t from-white to-transparent"
+          className="absolute bottom-0 left-0 right-0 h-16 transition-opacity duration-200 pointer-events-none select-none bg-gradient-to-t from-white-700 to-transparent"
           style={{ opacity: showBottomScroller ? 1 : 0 }}
         />
       </div>

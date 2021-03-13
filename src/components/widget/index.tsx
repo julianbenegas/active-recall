@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { Bell } from 'components/bell'
 import { Spinner } from 'components/spinner'
 import { useUser } from 'context/user'
 import { useCallback, useState } from 'react'
@@ -40,6 +41,7 @@ const Widget = ({
 }: Props) => {
   const [show, setShow] = useState(false)
   const { user, isLoading, onLogin } = useUser()
+  const [areNotificationsActive, setAreNotificationsActive] = useState(false)
 
   const handleShow = useCallback(() => {
     setShow(true)
@@ -55,11 +57,21 @@ const Widget = ({
     [onLogin]
   )
 
+  const toggleNotifications = useCallback(() => {
+    setAreNotificationsActive((p) => !p)
+  }, [])
+
   return (
     <div className="max-w-sm py-12 mx-auto space-y-8">
       <div className="relative overflow-hidden shadow-2xl rounded-xl">
         <div className="flex items-center justify-between px-4 py-4 h-14">
-          <span className="text-xs font-semibold text-gray-400">1/3</span>
+          <button
+            className="p-1 text-gray-400 transition-colors rounded-full cursor-default hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={toggleNotifications}
+            aria-label="Toggle notifications"
+          >
+            <Bell isOn={areNotificationsActive} />
+          </button>
           {isLoading ? (
             <div className="text-gray-400">
               <Spinner />
