@@ -9,6 +9,11 @@ const UserMenu = () => {
   const handleShow = useCallback(() => setShow(true), [])
   const handleHide = useCallback(() => setShow(false), [])
 
+  const handleLogout = useCallback(() => {
+    handleHide()
+    return onLogout()
+  }, [handleHide, onLogout])
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       const { target } = e
@@ -92,7 +97,7 @@ const UserMenu = () => {
           </div>
           <div className="px-2 pt-2 pb-3">
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               className="block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md cursor-default hover:text-gray-900 hover:bg-gray-50"
             >
               Log Out

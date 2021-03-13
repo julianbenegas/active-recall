@@ -1,9 +1,7 @@
 import { createContext, FC, useContext } from 'react'
 import { MagicUserMetadata } from '@magic-sdk/types'
 import { magic } from 'lib/magic/client'
-import { makeQuery } from 'lib/router'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type Context = {
   user: MagicUserMetadata | null | undefined
@@ -16,9 +14,7 @@ const UserContext = createContext<Context | undefined>(undefined)
 
 const UserProvider: FC = ({ children }) => {
   const [user, setUser] = useState<MagicUserMetadata | null>()
-  const isLoading = useMemo(() => user === undefined, [user])
-  const router = useRouter()
-  const { magic_credential } = router.query
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     magic?.user
@@ -29,6 +25,9 @@ const UserProvider: FC = ({ children }) => {
       .catch(() => {
         // Assume user is not logged in
         setUser(null)
+      })
+      .finally(() => {
+        setIsLoading(false)
       })
   }, [])
 
@@ -53,27 +52,16 @@ const UserProvider: FC = ({ children }) => {
     }
   }, [])
 
-  useEffect(() => {
-    async function getRedirectResult(cred: string) {
-      const didToken = await magic?.auth.loginWithCredential(cred)
-      if (didToken) postLogin(didToken)
-      makeQuery(router, { magic_credential: null })
-    }
-    if (typeof magic_credential === 'string') {
-      getRedirectResult(magic_credential)
-    }
-  }, [magic_credential, postLogin, router])
-
   const handleLogin = useCallback(
     async (email: string) => {
       try {
-        const didToken = await magic?.auth.loginWithMagicLink({
-          email,
-          redirectURI: window.location.href + '?auth=true'
-        })
+        setIsLoading(true)
+        const didToken = await magic?.auth.loginWithMagicLink({ email })
         if (didToken) await postLogin(didToken)
       } catch (error) {
         console.error(error)
+      } finally {
+        setIsLoading(false)
       }
     },
     [postLogin]
@@ -81,12 +69,16 @@ const UserProvider: FC = ({ children }) => {
 
   const handleLogout = useCallback(async () => {
     try {
+      setIsLoading(true)
       await magic?.user.logout()
       setUser(null)
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }, [])
+
   return (
     <UserContext.Provider
       value={{ user, isLoading, onLogin: handleLogin, onLogout: handleLogout }}

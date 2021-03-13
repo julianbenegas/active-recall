@@ -1,8 +1,11 @@
 import clsx from 'clsx'
+import { Spinner } from 'components/spinner'
 import { useUser } from 'context/user'
 import { useCallback, useState } from 'react'
 import ScrollerBox from './scroller'
 import UserMenu from './user-menu'
+
+import s from './widget.module.css'
 
 type Repetition =
   | 'in-text'
@@ -57,13 +60,16 @@ const Widget = ({
       <div className="relative overflow-hidden shadow-2xl rounded-xl">
         <div className="flex items-center justify-between px-4 py-4 h-14">
           <span className="text-xs font-semibold text-gray-400">1/3</span>
-          {user ? (
+          {isLoading ? (
+            <div className="text-gray-400">
+              <Spinner />
+            </div>
+          ) : user ? (
             <UserMenu />
           ) : (
             <form
               className="relative flex items-center w-3/5 space-x-2 transition-opacity"
               onSubmit={handleSubmit}
-              style={{ opacity: isLoading ? 0 : 1 }}
             >
               <input
                 type="email"
@@ -96,15 +102,24 @@ const Widget = ({
             </form>
           )}
         </div>
-        <ScrollerBox className="h-64 px-4 pt-2 pb-6">
-          <p className="text-lg text-gray-900">{question}</p>
+        <ScrollerBox className={clsx('h-64 px-4 pt-2 pb-6', s.container)}>
+          <p className={clsx('text-lg text-gray-900 leading-normal', s.text)}>
+            {question}
+          </p>
         </ScrollerBox>
         <div>
-          <ScrollerBox className="h-64 px-4 py-6 bg-opacity-30 bg-indigo-50">
+          <ScrollerBox
+            className={clsx(
+              'h-64 px-4 py-6 bg-opacity-30 bg-indigo-50',
+              s.container
+            )}
+          >
             <span className="absolute top-0 left-0 right-0 z-10 h-px bg-indigo-100" />
             <span className="absolute bottom-0 left-0 right-0 z-10 h-px bg-indigo-100" />
             {show ? (
-              <p onClick={handleShow} className="text-lg text-gray-900">
+              <p
+                className={clsx('text-lg text-gray-900 leading-normal', s.text)}
+              >
                 {answer}
               </p>
             ) : (

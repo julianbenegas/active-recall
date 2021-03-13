@@ -1,0 +1,7 @@
+.text {
+  font-size: clamp(12px, 1.111vw, 20px);
+}
+
+.container {
+  height: clamp(7rem, 16vh, 16rem);
+}
